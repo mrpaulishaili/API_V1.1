@@ -10,7 +10,7 @@ import {
   getCurrentUserCart,
   createCart,
   updateCart,
-} from "../controllers/orderController";
+} from "../controllers/cartController";
 
 router
   .route("/")

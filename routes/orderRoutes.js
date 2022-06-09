@@ -8,7 +8,7 @@ import {
 import {
   getAllOrders,
   getSingleOrder,
-  getCurrentUserOrder,
+  getCurrentUserOrders,
   createOrder,
   updateOrder,
 } from "../controllers/orderController";
@@ -18,7 +18,7 @@ router
   .post(authenticateUser, createOrder)
   .get(authenticateUser, authorizePermissions("admin"), getAllOrders);
 
-router.route("/showAllMyOrders").get(authenticateUser, getCurrentUserOrder);
+router.route("/showAllMyOrders").get(authenticateUser, getCurrentUserOrders);
 
 router
   .route("/:id")

@@ -3,7 +3,7 @@ const SingleCartItemSchema = mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
+  quantity: { type: Number, default: 1 },
 
   product: {
     type: mongoose.Schema.ObjectId,
@@ -14,8 +14,8 @@ const SingleCartItemSchema = mongoose.Schema({
 
 const CartSchema = mongoose.Schema(
   {
-    userID: {
-      type: mongoose.Schema.objectId,
+    userId: {
+      type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,
     },
