@@ -1,7 +1,10 @@
-import Product from '../models/Product';
-import { StatusCodes } from 'http-status-codes';
-import CustomError from '../errors';
-// const path = require('path');
+import Product from "../models/Product";
+import { StatusCodes } from "http-status-codes";
+import CustomError from "../errors";
+import * as path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const addProduct = async (req, res) => {
   req.body.user = req.user.userId;
@@ -16,7 +19,7 @@ export const getAllProducts = async (req, res) => {
 export const getSingleProduct = async (req, res) => {
   const { id: productId } = req.params;
 
-  const product = await Product.findOne({ _id: productId });
+  const product = await Product.findOne({ _id: productId }).populate("reviews");
 
   if (!product) {
     throw new CustomError.NotFoundError(`No product with id : ${productId}`);
@@ -48,32 +51,35 @@ export const deleteProduct = async (req, res) => {
   }
 
   await product.remove();
-  res.status(StatusCodes.OK).json({ msg: 'Success! Product removed.' });
+  res.status(StatusCodes.OK).json({ msg: "Success! Product removed." });
 };
 
 export const uploadImage = async (req, res) => {
   if (!req.files) {
-    throw new CustomError.BadRequestError('No File Uploaded');
+    throw new CustomError.BadRequestError("No File Uploaded");
   }
   const productImage = req.files.image;
+  console.log(
+    "🚀 ~ file: productController.js ~ line 59 ~ uploadImage ~ productImage",
+    productImage
+  );
 
-  if (!productImage.mimetype.startsWith('image')) {
-    throw new CustomError.BadRequestError('Please Upload Image');
+  if (!productImage.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please Upload Image");
   }
 
   const maxSize = 1024 * 1024;
 
   if (productImage.size > maxSize) {
     throw new CustomError.BadRequestError(
-      'Please upload image smaller than 1MB'
+      "Please upload image smaller than 1MB"
     );
   }
 
   const imagePath = path.join(
     __dirname,
-    '../public/uploads/' + `${productImage.name}`
+    "../public/uploads/" + `${productImage.name}`
   );
   await productImage.mv(imagePath);
   res.status(StatusCodes.OK).json({ image: `/uploads/${productImage.name}` });
 };
-

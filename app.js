@@ -15,6 +15,7 @@ import xss from "xss-clean";
 import cors from "cors";
 import mongoSanitize from "express-mongo-sanitize";
 import mongoose from "mongoose";
+import fileUpload from "express-fileupload";
 //  routers
 import authRouter from "./routes/authRoutes";
 import userRouter from "./routes/userRoutes";
@@ -40,12 +41,14 @@ app.use(cors());
 app.use(xss());
 app.use(morgan("combined"));
 app.use(mongoSanitize());
+app.use(fileUpload());
 app.use(cookieParser(process.env.JWT_SECRET));
 //--------------third party middleware------------------------//
 
 //--------------express middleware------------------------//
 app.use(express.json());
 app.use(express.static("./public"));
+app.use("/api/v1/products/upload", express.static("./public/upload"));
 //--------------express middleware------------------------//
 
 //--------------routes------------------------//

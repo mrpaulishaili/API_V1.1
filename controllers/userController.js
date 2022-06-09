@@ -7,8 +7,9 @@ import {
   checkPermissions,
 } from "../utils";
 
+//get all user logged in created
 export const getAllUsers = async (req, res) => {
-  console.log(req.user);
+  // //console.log(req.user);
   const users = await User.find({ role: "user" }).select("-password");
   res.status(StatusCodes.OK).json({ users });
 };
@@ -33,10 +34,7 @@ export const updateUser = async (req, res) => {
       "Please provide all necessary values"
     );
   }
-  const user = await User.findOne({ _id: req.user.userId });
-
-  user.email = email;
-  user.name = name;
+  const user = await User.findOneAndUpdate({ _id: req.user.userId }, req.body);
 
   await user.save();
 
@@ -48,6 +46,11 @@ export const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   if (!oldPassword || !newPassword) {
     throw new CustomError.BadRequestError("Please provide both values");
+  }
+  if (newPassword === oldPassword) {
+    throw new CustomError.BadRequestError(
+      "password already in use please provide another value"
+    );
   }
   const user = await User.findOne({ _id: req.user.userId });
 
