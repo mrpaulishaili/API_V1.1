@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 const SingleCartItemSchema = mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -7,7 +7,7 @@ const SingleCartItemSchema = mongoose.Schema({
 
   product: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Product',
+    ref: "Product",
     required: true,
   },
 });
@@ -16,12 +16,16 @@ const CartSchema = mongoose.Schema(
   {
     userID: {
       type: mongoose.Schema.objectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     products: [SingleCartItemSchema],
+    total: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Cart', CartSchema);
+export default mongoose.model("Cart", CartSchema);

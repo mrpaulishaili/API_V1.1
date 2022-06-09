@@ -37,7 +37,7 @@ app.use(
 app.use(helmet());
 app.use(cors());
 app.use(xss());
-app.use(morgan());
+app.use(morgan("combined"));
 app.use(mongoSanitize());
 app.use(cookieParser(process.env.JWT_SECRET));
 //--------------third party middleware------------------------//
