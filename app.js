@@ -20,6 +20,7 @@ import authRouter from "./routes/authRoutes";
 import userRouter from "./routes/userRoutes";
 import productRouter from "./routes/productRoutes";
 import reviewRouter from "./routes/reviewRoutes";
+import cartRouter from "./routes/cartRoutes";
 import orderRouter from "./routes/orderRoutes";
 
 // middleware
@@ -52,6 +53,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 //--------------routes------------------------//
 

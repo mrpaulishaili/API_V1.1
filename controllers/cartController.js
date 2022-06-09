@@ -5,85 +5,59 @@ import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors";
 import { checkPermissions } from "../utils";
 
+//create cart
 export const createCart = async (req, res) => {
-  const { product: productId } = req.body;
-
-  const isValidProduct = await Product.findOne({ _id: productId });
-
-  if (!isValidProduct) {
-    throw new CustomError.NotFoundError(`No product with id : ${productId}`);
-  }-
-
-  const alreadySubmitted = await Cart.findOne({
-    product: productId,
-    user: req.user.userId,
-  });
-
-  if (alreadySubmitted) {
-    throw new CustomError.BadRequestError(
-      "Already submitted review for this product"
-    );
+  const { userID } = req.user;
+  req.body.userId = req.user.userId;
+  const cartAlreadyExist = await Cart.findOne({ userId: req.body.userId });
+  if (cartAlreadyExist) {
+    throw new CustomError.BadRequestError("this User already have a cart");
   }
 
-  req.body.user = req.user.userId;
-  const review = await Cart.create(req.body);
-  res.status(StatusCodes.CREATED).json({ review });
+  const cart = await Cart.create(req.body);
+  res.status(StatusCodes.CREATED).json({ cart });
 };
+
+//getAllCarts
 export const getAllCarts = async (req, res) => {
-  const reviews = await Cart.find({}).populate({
-    path: "product",
-    select: "name company price",
-  });
-
-  res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
+  const cart = await Cart.find({}).sort("-total");
+  res.status(StatusCodes.OK).json({ cart, count: cart.length });
 };
-export const getSingleCart = async (req, res) => {
-  const { id: reviewId } = req.params;
 
-  const review = await Cart.findOne({ _id: reviewId });
+//getSingleCarts
+export const getCurrentUserCart = async (req, res) => {
+  const { id: cartId } = req.params;
+  const cart = await Cart.findOne({ _id: cartId });
 
-  if (!review) {
-    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+  if (!cart) {
+    const userCart = await Cart.findOne({ userId: req.user.userId });
+    // console.log(
+    // "🚀 ~ file: cartController.js ~ line 34 ~ getCurrentUserCart ~ userCart",
+    // userCart
+    // );
+    if (!userCart) {
+      throw new CustomError.NotFoundError(`No cart with id ${cartId}`);
+    }
+    res.status(StatusCodes.OK).json({ ...userCart._doc });
+  } else {
+    checkPermissions(req.user, cart.userId);
+    res.status(StatusCodes.OK).json({ cart });
   }
-
-  res.status(StatusCodes.OK).json({ review });
 };
 
 export const updateCart = async (req, res) => {
-  const { id: reviewId } = req.params;
-  const { rating, title, comment } = req.body;
-
-  const review = await Cart.findOne({ _id: reviewId });
-
-  if (!review) {
-    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
-  }
-
-  checkPermissions(req.user, review.user);
-
-  review.rating = rating;
-  review.title = title;
-  review.comment = comment;
-
-  await review.save();
-  res.status(StatusCodes.OK).json({ review });
-};
-export const deleteCart = async (req, res) => {
-  const { id: reviewId } = req.params;
-
-  const review = await Cart.findOne({ _id: reviewId });
-
-  if (!review) {
-    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
-  }
-
-  checkPermissions(req.user, review.user);
-  await review.remove();
-  res.status(StatusCodes.OK).json({ msg: "Success! Cart removed" });
+  const cart = await Cart.findOneAndUpdate(
+    { userID: req.params.id },
+    req.body,
+    {
+      runValidators: true,
+      new: true,
+    }
+  );
+  res.status(StatusCodes.OK).json({ cart });
 };
 
-export const getSingleProductCarts = async (req, res) => {
-  const { id: productId } = req.params;
-  const reviews = await Cart.find({ product: productId });
-  res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
-};
+// export const deleteAllCarts = async (req, res) => {
+//   await Cart.deleteMany();
+//   res.status(StatusCodes.OK).json({ msg: "success!!!" });
+// };

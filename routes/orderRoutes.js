@@ -1,27 +1,27 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
 import {
   authenticateUser,
   authorizePermissions,
-} from '../middleware/authentication';
+} from "../middleware/authentication";
 
 import {
   getAllOrders,
   getSingleOrder,
-  getCurrentUserOrders,
+  getCurrentUserOrder,
   createOrder,
   updateOrder,
-} from '../controllers/orderController';
+} from "../controllers/orderController";
 
 router
-  .route('/')
+  .route("/")
   .post(authenticateUser, createOrder)
-  .get(authenticateUser, authorizePermissions('admin'), getAllOrders);
+  .get(authenticateUser, authorizePermissions("admin"), getAllOrders);
 
-router.route('/showAllMyOrders').get(authenticateUser, getCurrentUserOrders);
+router.route("/showAllMyOrders").get(authenticateUser, getCurrentUserOrder);
 
 router
-  .route('/:id')
+  .route("/:id")
   .get(authenticateUser, getSingleOrder)
   .patch(authenticateUser, updateOrder);
 
