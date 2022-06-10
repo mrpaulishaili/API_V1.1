@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const WislistSchema = mongoose.Schema(
   {
-    userID: {
+    user: {
       type: mongoose.Schema.objectId,
       ref: "User",
       required: true,
@@ -17,4 +17,4 @@ const WislistSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Whislist", WislistSchema);
+export default mongoose.model("Wishlist", WislistSchema);

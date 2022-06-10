@@ -10,16 +10,18 @@ import {
   getCurrentUserCart,
   addToCart,
   clearCart,
+  getAUserCart,
 } from "../controllers/cartController";
 
 router
   .route("/")
-  .get(authenticateUser, authorizePermissions("admin"), getAllCarts)
   .delete(authenticateUser, clearCart)
-
+  .patch(authenticateUser, addToCart)
+  .get(authenticateUser, getCurrentUserCart);
 router
-  .route("/:id")
-  .get(authenticateUser, getCurrentUserCart)
-  .patch(authenticateUser, addToCart);
+  .route("/allCart")
+  .get(authenticateUser, authorizePermissions("admin"), getAllCarts);
+
+router.route("/:id").get(authenticateUser, getAUserCart);
 
 export default router;

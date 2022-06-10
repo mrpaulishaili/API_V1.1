@@ -1,11 +1,4 @@
 import mongoose from "mongoose";
-const SingleCartItemSchema = mongoose.Schema({
-  product: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Product",
-    required: true,
-  },
-});
 
 const CartSchema = mongoose.Schema(
   {

@@ -7,37 +7,38 @@ import {
   checkPermissions,
 } from "../utils";
 
-//get all user logged in created
+//HEAD:         GET ALL USERS           //
 export const getAllUsers = async (req, res) => {
-  // //console.log(req.user);
   const users = await User.find({ role: "user" }).select("-password");
-  res.status(StatusCodes.OK).json({ users });
+  res.status(StatusCodes.OK).json({ count: users.length, users });
 };
 
+//HEAD:         GET A SINGLE USER             //
 export const getSingleUser = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id }).select("-password");
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
   }
-  checkPermissions(req.user, user._id);
   res.status(StatusCodes.OK).json({ user });
 };
 
+//HEAD:         SHOW LOGGED IN USER            //
 export const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
-// update user with user.save()
+
+//HEAD:         UPDATE USER PROFILE            //
+//* update user with user.save()
 export const updateUser = async (req, res) => {
   if (!req.body) {
     throw new CustomError.BadRequestError(
       "Please provide all necessary values"
     );
   }
-  const user = await User.findOneAndUpdate(
-    { _id: req.user.userId },
-    req.body
-  ).select("name email role");
-  await user.save();
+  const user = await User.findOneAndUpdate({ _id: req.user.userId }, req.body, {
+    new: true,
+    runValidate: true,
+  }).select("username email role");
 
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
@@ -55,9 +56,7 @@ export const updateUserPassword = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Invalid Credentials");
   }
   if (newPassword === oldPassword) {
-    throw new CustomError.BadRequestError(
-      "password already in use please provide another value"
-    );
+    throw new CustomError.BadRequestError("you have used this password before");
   }
   user.password = newPassword;
 

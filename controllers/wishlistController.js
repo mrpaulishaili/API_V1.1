@@ -1,24 +1,24 @@
-import Cart from "../models/Cart";
+import Wishlist from "../models/Wishlist";
 import Product from "../models/Product";
 import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors";
 import { checkPermissions } from "../utils";
 
 //HEAD          ADD PRODUCTS TO THE CART            //
-export const addToCart = async (req, res) => {
+export const addToWishlist = async (req, res) => {
   const { products } = req.body;
   if (!products) {
     throw new CustomError.BadRequestError("no product provided");
   }
-  const cart = await Cart.findOne({ user: req.user.userId });
+  const cart = await Wishlist.findOne({ user: req.user.userId });
   cart.products = products;
   await cart.save();
   res.status(StatusCodes.OK).json({ cart });
 };
 
 //HEAD:           GET ALL CART --specific for the admin--         //
-export const getAllCarts = async (req, res) => {
-  const cart = await Cart.find()
+export const getAllWishlists = async (req, res) => {
+  const cart = await Wishlist.find()
     .select()
     .sort("-total")
     .populate({
@@ -30,9 +30,9 @@ export const getAllCarts = async (req, res) => {
 };
 
 //HEAD:       GET LOGGED IN USER'S CART   --only for logged in user and admin--   //
-export const getCurrentUserCart = async (req, res) => {
+export const getCurrentUserWishlist = async (req, res) => {
   const { id: cartId } = req.params;
-  const cart = await Cart.findOne({ user: req.user.userId }).populate({
+  const cart = await Wishlist.findOne({ user: req.user.userId }).populate({
     path: "user",
     select: "username profileImg",
   });
@@ -44,26 +44,26 @@ export const getCurrentUserCart = async (req, res) => {
 
 //HEAD:         EMPTY CART          //
 //!clear cart
-export const clearCart = async (req, res) => {
-  await Cart.findOne({ user: req.userId });
+export const clearWishlist = async (req, res) => {
+  await Wishlist.findOne({ user: req.userId });
   checkPermissions(req.user, cart.userId);
   cart.products = [];
   await cart.save();
   res.status(StatusCodes.OK).json({ msg: "cart cleared ❗" });
 };
 
-export const getAUserCart = async (req, res) => {
+export const getAUserWishlist = async (req, res) => {
   const { id: cartId } = req.params;
   const { userId, role } = req.user;
 
   if (role === "user") {
-    const cart = await Cart.findOne({ user: userId }).populate({
+    const cart = await Wishlist.findOne({ user: userId }).populate({
       path: "user",
       select: "username profileImg",
     });
     return res.status(StatusCodes.OK).json({ cart });
   }
-  const cart = await Cart.findOne({ _id: cartId }).populate({
+  const cart = await Wishlist.findOne({ _id: cartId }).populate({
     path: "user",
     select: "username profileImg",
   });

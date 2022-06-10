@@ -35,6 +35,7 @@ export const login = async (req, res) => {
     throw new CustomError.BadRequestError("Please provide email and password");
   }
 
+  //*validation
   const user = await User.findOne({ email });
   if (!user) {
     throw new CustomError.UnauthenticatedError("Invalid Credentials");
