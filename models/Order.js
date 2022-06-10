@@ -1,17 +1,4 @@
-import mongoose from 'mongoose';
-
-const SingleOrderItemSchema = mongoose.Schema({
-  name: { type: String, required: true },
-  image: { type: String, required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-
-  product: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Product',
-    required: true,
-  },
-});
+import mongoose from "mongoose";
 
 const OrderSchema = mongoose.Schema(
   {
@@ -32,16 +19,24 @@ const OrderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    orderItems: [SingleOrderItemSchema],
+    orderItems: [
+      {
+        product: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+      },
+    ],
 
     status: {
       type: String,
-      enum: ['pending', 'failed', 'paid', 'delivered', 'canceled'],
-      default: 'pending',
+      enum: ["pending", "failed", "paid", "delivered", "canceled"],
+      default: "pending",
     },
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     address: {
@@ -56,4 +51,4 @@ const OrderSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('Order', OrderSchema);
+export default mongoose.model("Order", OrderSchema);
