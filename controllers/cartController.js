@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors";
 import { checkPermissions } from "../utils";
 
-//getAllCarts
+//-getAllCarts
 export const getAllCarts = async (req, res) => {
   const cart = await Cart.find({})
     .sort("-total")
@@ -13,7 +13,7 @@ export const getAllCarts = async (req, res) => {
   res.status(StatusCodes.OK).json({ cart, count: cart.length });
 };
 
-//getSingleCarts
+//-getSingleCarts
 export const getCurrentUserCart = async (req, res) => {
   const { id: cartId } = req.params;
   const cart = await Cart.findOne({ _id: cartId });
@@ -30,6 +30,7 @@ export const getCurrentUserCart = async (req, res) => {
   }
 };
 
+//- Add Itens to cart
 export const addToCart = async (req, res) => {
   const cart = await Cart.findOneAndUpdate(
     { userID: req.params.id },

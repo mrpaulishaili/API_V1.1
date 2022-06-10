@@ -3,7 +3,7 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
     unique: true,
     required: [true, "Please provide name"],
@@ -45,7 +45,7 @@ UserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  this.fullName.push(this.name.split(" "));
+  this.fullName.push(this.username.split(" "));
 });
 
 UserSchema.methods.comparePassword = async function (canditatePassword) {
