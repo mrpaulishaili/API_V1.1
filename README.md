@@ -118,11 +118,12 @@
 
 #### Authorize Permissions Setup
 
-- [] hardcode
+- [x] hardcode
+- [x] setup the dynamic functions
 
 #### Authorize Permissions Complete
 
-- [] introduce params
+- [x] introduce params
 
 #### ShowCurrentUser
 
@@ -131,7 +132,7 @@
 
 #### UpdateUserPassword
 
-- [] almost identical to login user
+- [x] almost identical to login user
 - [] add authenticateUser middleware in the route
 - [] check for oldPassword and newPassword in the body
 - [] if one missing 400

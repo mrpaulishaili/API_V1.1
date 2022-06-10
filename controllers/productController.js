@@ -59,10 +59,6 @@ export const uploadImage = async (req, res) => {
     throw new CustomError.BadRequestError("No File Uploaded");
   }
   const productImage = req.files.image;
-  console.log(
-    "🚀 ~ file: productController.js ~ line 59 ~ uploadImage ~ productImage",
-    productImage
-  );
 
   if (!productImage.mimetype.startsWith("image")) {
     throw new CustomError.BadRequestError("Please Upload Image");

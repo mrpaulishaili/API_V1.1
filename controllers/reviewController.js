@@ -7,6 +7,7 @@ import { checkPermissions } from "../utils";
 
 export const createReview = async (req, res) => {
   const { product: productId } = req.body;
+  req.body.userId = req.user.userId;
 
   const isValidProduct = await Product.findOne({ _id: productId });
 
@@ -40,7 +41,10 @@ export const getAllReviews = async (req, res) => {
 export const getSingleReview = async (req, res) => {
   const { id: reviewId } = req.params;
 
-  const review = await Review.findOne({ _id: reviewId });
+  const review = await Review.findOne({ _id: reviewId }).populate({
+    path: "product",
+    select: "name price imageURL",
+  });
 
   if (!review) {
     throw new CustomError.NotFoundError(`No review with id ${reviewId}`);

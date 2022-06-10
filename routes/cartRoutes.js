@@ -8,18 +8,18 @@ import {
 import {
   getAllCarts,
   getCurrentUserCart,
-  createCart,
-  updateCart,
+  addToCart,
+  clearCart,
 } from "../controllers/cartController";
 
 router
   .route("/")
-  .post(authenticateUser, createCart)
-  .get(authenticateUser, authorizePermissions("admin"), getAllCarts);
+  .get(authenticateUser, authorizePermissions("admin"), getAllCarts)
+  .delete(authenticateUser, clearCart)
 
 router
   .route("/:id")
   .get(authenticateUser, getCurrentUserCart)
-  .patch(authenticateUser, updateCart);
+  .patch(authenticateUser, addToCart);
 
 export default router;

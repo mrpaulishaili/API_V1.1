@@ -28,14 +28,15 @@ export const showCurrentUser = async (req, res) => {
 };
 // update user with user.save()
 export const updateUser = async (req, res) => {
-  const { email, name } = req.body;
-  if (!email || !name) {
+  if (!req.body) {
     throw new CustomError.BadRequestError(
       "Please provide all necessary values"
     );
   }
-  const user = await User.findOneAndUpdate({ _id: req.user.userId }, req.body);
-
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    req.body
+  ).select("name email role");
   await user.save();
 
   const tokenUser = createTokenUser(user);
@@ -47,16 +48,16 @@ export const updateUserPassword = async (req, res) => {
   if (!oldPassword || !newPassword) {
     throw new CustomError.BadRequestError("Please provide both values");
   }
-  if (newPassword === oldPassword) {
-    throw new CustomError.BadRequestError(
-      "password already in use please provide another value"
-    );
-  }
   const user = await User.findOne({ _id: req.user.userId });
 
   const isPasswordCorrect = await user.comparePassword(oldPassword);
   if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError("Invalid Credentials");
+  }
+  if (newPassword === oldPassword) {
+    throw new CustomError.BadRequestError(
+      "password already in use please provide another value"
+    );
   }
   user.password = newPassword;
 

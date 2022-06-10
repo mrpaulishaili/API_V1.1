@@ -11,6 +11,10 @@ export const register = async (req, res) => {
   if (emailAlreadyExists) {
     throw new CustomError.BadRequestError("Email already exists");
   }
+  const nameAlreadyExists = await User.findOne({ name });
+  if (nameAlreadyExists) {
+    throw new CustomError.BadRequestError("Name already exists");
+  }
 
   // first registered user is an admin
   const isFirstAccount = (await User.countDocuments({})) === 0;
@@ -19,7 +23,7 @@ export const register = async (req, res) => {
   const user = await User.create({ name, email, password, role });
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
-  await Cart.create({ userId: tokenUser.userId });
+  await Cart.create({ user: tokenUser.userId });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 
