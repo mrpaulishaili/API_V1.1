@@ -61,6 +61,13 @@ ProductSchema.virtual("reviews", {
   justOne: false,
 });
 
+ProductSchema.virtual("likes", {
+  ref: "Wishlist",
+  localField: "_id",
+  foreignField: "product",
+  justOne: false,
+});
+
 ProductSchema.pre("remove", async function (next) {
   await this.model("Review").deleteMany({ product: this._id });
 });

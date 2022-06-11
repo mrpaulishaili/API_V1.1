@@ -10,8 +10,10 @@ export const addToCart = async (req, res) => {
   if (!products) {
     throw new CustomError.BadRequestError("no product provided");
   }
-  const cart = await Cart.findOne({ user: req.user.userId });
-  cart.products = products;
+  const cart = await Cart.findOne({ user: req.user.userId }).populate(
+    "product"
+  );
+  cart.products.push(...products);
   await cart.save();
   res.status(StatusCodes.OK).json({ cart });
 };

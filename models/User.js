@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
+    trim: true,
     unique: true,
     required: [true, "Please provide name"],
     minlength: 3,
@@ -21,6 +22,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: [true, "Please provide email"],
+    immutable: true,
     validate: {
       validator: validator.isEmail,
       message: "Please provide valid email",
@@ -55,13 +57,14 @@ UserSchema.pre("save", async function () {
 //*schema middleware populating the fullname fields of a newly registered user
 UserSchema.pre("save", async function () {
   let i = 0;
-  let username = this.fullname.firstName;
-  console.log("🚀 ~ file: User.js ~ line 59 ~ username", username);
-
-  for (const key in this.fullName) {
-    this.fullName[key] =
-      username.split(" ")[i] !== null ? username.split(" ")[i] : username;
-    i++;
+  if (this.fullName.firstName === undefined) {
+    for (const key in this.fullName) {
+      this.fullName[key] =
+        this.username.split(" ")[i] !== null
+          ? this.username.split(" ")[i]
+          : this.username;
+      i++;
+    }
   }
 });
 
