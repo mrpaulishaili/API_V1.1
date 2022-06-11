@@ -68,7 +68,10 @@ app.use(errorHandlerMiddleware);
 const PORT = process.env.PORT || 5000;
 (async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    const conn = await mongoose.connect(process.env.MONGO_URL);
+    console.log(
+      `Successfully ${conn.ConnectionStates[1]} to ${conn.connection.name} `
+    );
     app.listen(PORT, () =>
       console.log(
         `Server is started in ${process.env.NODE_ENV} on http://localhost:${PORT}...`
